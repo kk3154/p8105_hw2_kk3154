@@ -5,4 +5,26 @@ date: "10/9/2021"
 output: github_document
 ---
 
+```{r, echo = FALSE, message = FALSE}
+library(tidyverse)
+library(readxl)
+```
 
+## Problem 1 - Mr. Trash Wheel data
+
+1.1 - Reading and cleaning the Mr. Trash Wheel excel data sheet:
+
+* omitting non-data entries
+* using reasonable variable names
+* omitting rows with non-dumpster specific data
+* round number of sports balls to the nearest integer
+
+```{r}
+trash_df = read_excel(
+  "data/Trash-Wheel-Collection-Totals-7-2020-2.xlsx",
+  sheet = "Mr. Trash Wheel", 
+  range = "A2:N535") %>% 
+  janitor::clean_names() %>% 
+  drop_na(dumpster, month) %>% 
+  mutate(sports_balls = round(sports_balls))
+```
