@@ -13,10 +13,15 @@ library(readxl)
 ## Problem 1 - Mr. Trash Wheel data
 
 1.1 - Reading and cleaning the Mr. Trash Wheel excel data sheet:
+
 * omitting non-data entries
+
 * using reasonable variable names
+
 * omitting rows with non-dumpster specific data
+
 * round number of sports balls to the nearest integer
+
 * NA'ing the date for one observation in January 2020 with date '1900-01-20'
 
 ```{r}
@@ -30,8 +35,11 @@ trash_df = read_excel(
 ```
 
 1.2 - Reading and cleaning precipitation data:
+
 * years: 2018-2019
+  
 * omit rows without precip data
+  
 * add variable for year
 
 ```{r}
@@ -53,6 +61,7 @@ precip_19 = read_excel(
 ```
 
 * combine precipitation datasets
+
 * convert month to a character variable
 
 ```{r}
@@ -63,4 +72,32 @@ precip_df =
 ```
 
 The Mr. Trash Wheel dataset contains `r ncol(trash_df)` variables of data on how much trash of various types (plastic bottles, cigarette butts, grocery bags, etc.) by weight and volume was collected by the Trash Wheel in Baltimore's Inner Harbor. Data are collected and reported each time a dumpster is filled, and there were `r nrow(trash_df)` dumpster observation rows recorded in this dataset between `r min(pull(trash_df, year))` and `r max(pull(trash_df, year))`. The amount of trash can be impacted by rainfall. The precipitation dataset contains precipitation totals in Baltimore (in inches) by month, with a total of `r ncol(precip_df)` variables in the dataset and `r nrow(precip_df)` observations between `r min(pull(precip_df, year))` and `r max(pull(precip_df, year))`. The total precipitation in 2018 was `r sum(pull(filter(precip_df, year == 2018), precip_tot))` inches. The median number of sports balls in a dumpster in 2019 was `r median(pull(filter(trash_df, year == 2019), sports_balls))` balls.
+
+
+## Problem 2 - FiveThirtyEight Data
+
+2.1 - Importing and Cleaning `pols-month.csv` data:
+
+* Breaking up the variable `mon` into integer variables `year`, `month`, and `day`
+
+* replacing month number with month name
+
+* creating a `president` variable taking values `gop` and `dem`
+
+* removing `prez_dem` and `prez_gop`
+
+* removing the `day` variable
+
+```{r}
+pols_df = read_csv("data/pols-month.csv") %>% 
+  separate(mon, into = c("year", "month", "day"), "-") %>% 
+  mutate(year = as.integer(year), month = as.integer(month), day = as.integer(day)) %>% 
+  mutate(month = month.name[month]) %>% 
+  mutate(president = case_when(
+    prez_dem == 1 ~ "dem",
+    prez_gop == 1 ~ "gop") %>% 
+      as.factor()) %>% 
+  select(-prez_dem, -prez_gop, -day)
+```
+
 
