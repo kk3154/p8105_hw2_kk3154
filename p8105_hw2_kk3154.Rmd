@@ -174,7 +174,7 @@ baby_df = read_csv(
   distinct()
 ```
 
-Producing a reader-friendly table of the rank in popularity of the name "Olivia" as a female baby name over time, with rows of ethnicity and columns of year.
+3.2 - Producing a reader-friendly table of the rank in popularity of the name "Olivia" as a female baby name over time, with rows of ethnicity and columns of year.
 
 ```{r}
 baby_df %>% 
@@ -189,7 +189,7 @@ baby_df %>%
   knitr::kable()
 ```
 
-Producing a reader-friendly table of the most popular male baby name over time.
+3.3 - Producing a reader-friendly table of the most popular male baby name over time.
 
 ```{r}
 baby_df %>% 
@@ -202,5 +202,18 @@ baby_df %>%
   fill(`2016`:`2011`, .direction = 'updown') %>% 
   distinct() %>% 
   knitr::kable()
+```
+
+3.4  Producing a scatter plot for male, white, non-Hispanic children born in 2016 of count of children with that name (Y axis) against rank in popularity (x axis).
+
+```{r}
+plot_df = filter(
+  baby_df,
+  gender == "MALE", 
+  year_of_birth == "2016", 
+  ethnicity == "WHITE NON HISPANIC"
+)
+
+ggplot(plot_df, aes(x = rank, y = count)) + geom_point()
 ```
 
