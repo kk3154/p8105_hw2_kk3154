@@ -134,5 +134,16 @@ unemp_df = read_csv("data/unemployment.csv") %>%
   mutate(month = month.name[match(month, month.abb)])
 ```
 
+2.4 - Joining the data
 
+1) merging `snp` into `pols`
 
+2)  merging `unemployment` into the result from the first join
+
+```{r}
+df_538 = 
+  left_join(pols_df, snp_df, by = c("year", "month")) %>% 
+  left_join(unemp_df, by = c("year", "month"))
+```
+
+This FiveThirtyEight dataset was constructed by merging three component data files. The first data file,  `pols-month.csv`, contained information about the political party affiliations (president, senators, and representatives) during each month of each year from `r min(pull(pols_df, year))` through `r max(pull(precip_df, year))`. The `snp.csv` data file contained information on the S&P stock market index closing value on the first business date of each month from `r min(pull(snp_df, year))` through `r max(pull(snp_df, year))`. The `unemployment.csv` file contained the unemployment percentage by month from from `r min(pull(unemp_df, year))` through `r max(pull(unemp_df, year))`. The `df_538` dataset that resulted from merging these 3 datasets on a year-month key contains `r nrow(df_538)` observations and `r ncol(df_538)` variables, of which month + year, president (dem vs. gop), close (S&P market closing value), and unemp_pct (% unemployed) might be of interest for analysis. Left joins were used beginning with the dataset with the oldest observations to preserve instances where data were available for some but not all elements. Data is complete for `r nrow(drop_na(df_538))` observations between `r min(pull(drop_na(df_538), year))` and `r max(pull(drop_na(df_538), year))`.
