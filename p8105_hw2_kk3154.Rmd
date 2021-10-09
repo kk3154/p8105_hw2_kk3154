@@ -166,13 +166,41 @@ baby_df = read_csv(
   "data/Popular_Baby_Names.csv") %>% 
   janitor::clean_names() %>% 
   mutate(gender = str_to_upper(gender), 
-         ethnicity = ifelse(ethnicity == "BLACK NON HISPANIC", "BLACK NON HISP", ethnicity),
-         ethnicity = ifelse(ethnicity == "ASIAN AND PACIFIC ISLANDER", "ASIAN AND PACI", ethnicity),
-         ethnicity = ifelse(ethnicity == "WHITE NON HISPANIC", "WHITE NON HISP", ethnicity),
+         ethnicity = ifelse(ethnicity == "BLACK NON HISP", "BLACK NON HISPANIC", ethnicity),
+         ethnicity = ifelse(ethnicity == "ASIAN AND PACI", "ASIAN AND PACIFIC ISLANDER", ethnicity),
+         ethnicity = ifelse(ethnicity == "WHITE NON HISP", "WHITE NON HISPANIC", ethnicity),
          ethnicity = factor(ethnicity), 
          childs_first_name = str_to_upper(childs_first_name)) %>% 
   distinct()
 ```
 
+Producing a reader-friendly table of the rank in popularity of the name "Olivia" as a female baby name over time, with rows of ethnicity and columns of year.
 
+```{r}
+baby_df %>% 
+  filter(childs_first_name == "OLIVIA", gender == "FEMALE") %>% 
+  pivot_wider(
+    names_from = "year_of_birth",
+    values_from = "rank") %>% 
+  select(-gender, -childs_first_name, -count) %>% 
+  group_by(ethnicity) %>% 
+  fill(`2016`:`2011`, .direction = 'updown') %>% 
+  distinct() %>% 
+  knitr::kable()
+```
+
+Producing a reader-friendly table of the most popular male baby name over time.
+
+```{r}
+baby_df %>% 
+  filter(rank == 1, gender == "MALE") %>% 
+  pivot_wider(
+    names_from = "year_of_birth",
+    values_from = "childs_first_name") %>% 
+  select(-gender, -rank, -count) %>% 
+  group_by(ethnicity) %>% 
+  fill(`2016`:`2011`, .direction = 'updown') %>% 
+  distinct() %>% 
+  knitr::kable()
+```
 
